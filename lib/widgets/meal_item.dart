@@ -13,13 +13,17 @@ class MealItem extends StatelessWidget {
       margin: const EdgeInsets.all(8),
       clipBehavior: Clip.hardEdge,
       shape: BeveledRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      elevation: 2,
       child: InkWell(
         onTap: () {},
         child: Stack(
           children: [
             FadeInImage(
+              fit: BoxFit.cover,
               placeholder: MemoryImage(kTransparentImage),
               image: NetworkImage(meal.imageUrl),
+              height: 200,
+              width: double.infinity,
             ),
             Positioned(
               bottom: 0,
