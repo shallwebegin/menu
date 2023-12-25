@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:menu/models/meal.dart';
-import 'package:menu/widgets/meal_item_detail.dart';
+import 'package:menu/widgets/meal_item.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class MealItemTrait extends StatelessWidget {
   const MealItemTrait(
-      {super.key, required this.meal, required this.selectMeal});
+      {super.key, required this.meal, required this.selectedMeal});
   final Meal meal;
-  final void Function(Meal meal) selectMeal;
+  final void Function(Meal meal) selectedMeal;
 
   String get complexityText {
-    return meal.complexity.name[0].toUpperCase() +
-        meal.complexity.name.substring(1);
+    return meal.complexity.name[0] + meal.complexity.name.substring(1);
   }
 
   String get affordabilityText {
-    return meal.affordability.name[0].toUpperCase() +
-        meal.affordability.name.substring(1);
+    return meal.affordability.name[0] + meal.affordability.name.substring(1);
   }
 
   @override
@@ -24,7 +22,7 @@ class MealItemTrait extends StatelessWidget {
     return Card(
       child: InkWell(
         onTap: () {
-          selectMeal(meal);
+          selectedMeal(meal);
         },
         child: Stack(
           children: [
@@ -42,23 +40,32 @@ class MealItemTrait extends StatelessWidget {
                   children: [
                     Text(
                       meal.title,
-                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          color: Theme.of(context).colorScheme.onBackground),
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(
-                      height: 20,
+                      height: 15,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        MealItemDetail(
-                            icon: Icons.schedule,
-                            title: '${meal.duration} min'),
-                        MealItemDetail(icon: Icons.work, title: complexityText),
-                        MealItemDetail(
-                            icon: Icons.attach_money, title: affordabilityText),
+                        MealItem(
+                            label: '${meal.duration} min',
+                            icon: Icons.schedule),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        MealItem(label: complexityText, icon: Icons.work),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        MealItem(
+                            label: affordabilityText, icon: Icons.attach_money),
                       ],
-                    ),
+                    )
                   ],
                 ),
               ),
