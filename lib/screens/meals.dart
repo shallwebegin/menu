@@ -1,49 +1,54 @@
 import 'package:flutter/material.dart';
-
 import 'package:menu/models/meal.dart';
-import 'package:menu/widgets/meal_item.dart';
+import 'package:menu/screens/meal_detail.dart';
+import 'package:menu/widgets/meal_item_trait.dart';
 
 class MealsScreen extends StatelessWidget {
-  const MealsScreen({super.key, required this.meal, required this.title});
-  final List<Meal> meal;
-  final String title;
+  const MealsScreen({super.key, required this.meals, this.title});
+  final String? title;
+  final List<Meal> meals;
+
+  void selectMeal(BuildContext context, Meal meal) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => MealDetailScreen(meal: meal),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget content = Center(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Oh no...',
+            'Oh no....',
             style: Theme.of(context)
                 .textTheme
                 .bodyLarge!
                 .copyWith(color: Theme.of(context).colorScheme.onBackground),
           ),
           const SizedBox(
-            height: 20,
+            height: 16,
           ),
-          Text(
-            'Select another category',
-            style: Theme.of(context)
-                .textTheme
-                .bodyLarge!
-                .copyWith(color: Theme.of(context).colorScheme.onBackground),
-          ),
+          const Text('Pick another cateory'),
         ],
       ),
     );
-    if (meal.isNotEmpty) {
-      content = ListView.builder(
-        itemCount: meal.length,
-        itemBuilder: (context, index) => MealItem(meal: meal[index]),
-      );
+
+    if (title == null) {
+      return content;
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Text(title!),
       ),
-      body: content,
+      body: ListView.builder(
+        itemCount: meals.length,
+        itemBuilder: (context, index) => MealItemTrait(
+            meal: meals[index],
+            selectMeal: (meal) {
+              selectMeal(context, meal);
+            }),
+      ),
     );
   }
 }
