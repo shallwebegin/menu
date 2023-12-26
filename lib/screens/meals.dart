@@ -8,15 +8,19 @@ class MealsScreen extends StatelessWidget {
       {super.key,
       this.title,
       required this.meals,
-      required this.favoriteScreen});
+      required this.favoriteMealCheck});
   final String? title;
   final List<Meal> meals;
-  final void Function(Meal meal) favoriteScreen;
-  void _selectedMeal(BuildContext context, Meal meal) {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) =>
-          MealDetailScreen(meal: meal, favoriteScreen: favoriteScreen),
-    ));
+  final void Function(Meal meal) favoriteMealCheck;
+  void _selectMeal(BuildContext context, Meal meal) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => MealDetailScreen(
+          meal: meal,
+          favoriteMealCheck: favoriteMealCheck,
+        ),
+      ),
+    );
   }
 
   @override
@@ -26,20 +30,20 @@ class MealsScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'oh no..',
+            'Oh no not found',
             style: Theme.of(context)
                 .textTheme
-                .bodyLarge!
+                .titleLarge!
                 .copyWith(color: Theme.of(context).colorScheme.onBackground),
           ),
           const SizedBox(
-            height: 10,
+            height: 20,
           ),
           Text(
-            'Please select another category',
+            'Please back',
             style: Theme.of(context)
                 .textTheme
-                .bodyLarge!
+                .titleLarge!
                 .copyWith(color: Theme.of(context).colorScheme.onBackground),
           ),
         ],
@@ -49,9 +53,10 @@ class MealsScreen extends StatelessWidget {
       content = ListView.builder(
         itemCount: meals.length,
         itemBuilder: (context, index) => MealItemTrait(
-          meal: meals[index],
-          selectedMeal: (meal) => _selectedMeal(context, meal),
-        ),
+            meal: meals[index],
+            selectedMeal: (meal) {
+              _selectMeal(context, meal);
+            }),
       );
     }
     if (title == null) {

@@ -8,6 +8,7 @@ class MealItemTrait extends StatelessWidget {
       {super.key, required this.meal, required this.selectedMeal});
   final Meal meal;
   final void Function(Meal meal) selectedMeal;
+
   String get complexityText {
     return meal.complexity.name[0] + meal.complexity.name.substring(1);
   }
@@ -27,15 +28,15 @@ class MealItemTrait extends StatelessWidget {
             children: [
               FadeInImage(
                 fit: BoxFit.cover,
-                placeholder: MemoryImage(kTransparentImage),
-                image: NetworkImage(meal.imageUrl),
                 height: 200,
                 width: double.infinity,
+                placeholder: MemoryImage(kTransparentImage),
+                image: NetworkImage(meal.imageUrl),
               ),
               Positioned(
                 bottom: 0,
-                right: 0,
                 left: 0,
+                right: 0,
                 child: Container(
                   color: Colors.black54,
                   child: Column(
@@ -52,25 +53,14 @@ class MealItemTrait extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           MealItem(
-                            label: '${meal.duration} min',
-                            icon: (Icons.schedule),
-                          ),
-                          const SizedBox(
-                            width: 6,
-                          ),
+                              icon: Icons.schedule,
+                              label: '${meal.duration} min'),
+                          MealItem(icon: Icons.work, label: complexityText),
                           MealItem(
-                            label: complexityText,
-                            icon: (Icons.work),
-                          ),
-                          MealItem(
-                            label: affordabilityText,
-                            icon: (Icons.attach_money),
-                          ),
-                          const SizedBox(
-                            width: 6,
-                          ),
+                              icon: Icons.attach_money,
+                              label: affordabilityText)
                         ],
-                      ),
+                      )
                     ],
                   ),
                 ),

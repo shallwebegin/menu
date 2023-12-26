@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:menu/data/dummy_data.dart';
 import 'package:menu/models/meal.dart';
 import 'package:menu/screens/categories.dart';
+import 'package:menu/screens/filters.dart';
 import 'package:menu/screens/meals.dart';
 import 'package:menu/widgets/main_drawer.dart';
+
+const kInitialFilters = {
+  Filter.glutenFree: false,
+  Filter.lactoseFree: false,
+  Filter.vegetarian: false,
+  Filter.vegan: false,
+};
 
 class TabsScreen extends StatefulWidget {
   const TabsScreen({super.key});
@@ -12,57 +21,69 @@ class TabsScreen extends StatefulWidget {
 }
 
 class _TabsScreenState extends State<TabsScreen> {
-  void _showInfoMessage(String message) {
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
-  }
-
-  final List<Meal> favoriteMeals = [];
-  void _favoritePage(Meal meal) {
-    final isExisting = favoriteMeals.contains(meal);
+  Map<Filter, bool> _selectedFilters = kInitialFilters;
+  final List<Meal> favoriteMeal = [];
+  void _selectedMeal(Meal meal) {
+    final isExisting = favoriteMeal.contains(meal);
     if (isExisting) {
       setState(() {
-        favoriteMeals.remove(meal);
         Navigator.pop(context);
+        favoriteMeal.remove(meal);
       });
-      _showInfoMessage('Favorilerden Cikarildi');
     } else {
       setState(() {
-        favoriteMeals.add(meal);
-        Navigator.pop(context);
-        _showInfoMessage('Favorilere eklendi');
+        Navigator.of(context).pop();
+        favoriteMeal.add(meal);
       });
     }
   }
 
-  int pageIndex = 0;
+  int _selectPageIndex = 0;
   void _selectPage(int index) {
     setState(() {
-      pageIndex = index;
+      _selectPageIndex = index;
     });
   }
 
-  void _setPage(String identifier) {
+  void _selectScreen(String identifier) async {
     if (identifier == 'Filters') {
-    } else {
-      Navigator.of(context).pop();
+      final result = await Navigator.of(context).push<Map<Filter, bool>>(
+        MaterialPageRoute(
+          builder: (context) => const FiltersScreen(),
+        ),
+      );
+      setState(() {
+        _selectedFilters = result ?? kInitialFilters;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final avaibleMeals = dummyMeals.where((meal) {
+      if (_selectedFilters[Filter.glutenFree]! && !meal.isGlutenFree) {
+        return false;
+      }
+      if (_selectedFilters[Filter.lactoseFree]! && !meal.isLactoseFree) {
+        return false;
+      }
+      if (_selectedFilters[Filter.vegetarian]! && !meal.isVegetarian) {
+        return false;
+      }
+      if (_selectedFilters[Filter.vegan]! && !meal.isVegan) {
+        return false;
+      }
+      return true;
+    }).toList();
     Widget activePage = CategoriesScreen(
-      favoriteScreen: _favoritePage,
+      favoriteMealCheck: _selectedMeal,
+      avaibleMeals: avaibleMeals,
     );
     var activePageTitle = 'Categories';
-    if (pageIndex == 1) {
+    if (_selectPageIndex == 1) {
       activePage = MealsScreen(
-        meals: favoriteMeals,
-        favoriteScreen: _favoritePage,
+        meals: favoriteMeal,
+        favoriteMealCheck: _selectedMeal,
       );
       activePageTitle = 'Favorite';
     }
@@ -70,15 +91,11 @@ class _TabsScreenState extends State<TabsScreen> {
       appBar: AppBar(
         title: Text(activePageTitle),
       ),
-      drawer: MainDrawer(onSelectScreen: _setPage),
       body: activePage,
+      drawer: MainDrawer(onSelectScreen: _selectScreen),
       bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Colors.pink,
-        unselectedItemColor: Colors.amber,
-        currentIndex: pageIndex,
-        onTap: (index) {
-          _selectPage(index);
-        },
+        onTap: _selectPage,
+        currentIndex: _selectPageIndex,
         items: const [
           BottomNavigationBarItem(
               icon: Icon(Icons.set_meal), label: 'Categories'),

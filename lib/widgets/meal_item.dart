@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class MealItem extends StatelessWidget {
-  const MealItem({super.key, required this.label, required this.icon});
+  const MealItem({super.key, required this.icon, required this.label});
+
   final String label;
   final IconData icon;
 
@@ -15,10 +16,10 @@ class MealItem extends StatelessWidget {
         ),
         Text(
           label,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-          ),
+          style: Theme.of(context)
+              .textTheme
+              .bodyLarge!
+              .copyWith(color: Theme.of(context).colorScheme.onBackground),
         ),
       ],
     );

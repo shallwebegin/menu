@@ -6,6 +6,7 @@ class CategoryGridItem extends StatelessWidget {
       {super.key, required this.category, required this.selectCategory});
   final Category category;
   final void Function() selectCategory;
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
