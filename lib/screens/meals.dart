@@ -1,36 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:menu/models/meal.dart';
-import 'package:menu/screen/meal_detail_screen.dart';
-
+import 'package:menu/screens/meal_detail.dart';
 import 'package:menu/widgets/meal_item_trait.dart';
 
 class MealsScreen extends StatelessWidget {
   const MealsScreen(
       {super.key,
-      required this.meal,
-      required this.title,
-      required this.favoriMeali});
-  final List<Meal> meal;
-  final String title;
-  final void Function(Meal meal) favoriMeali;
+      this.title,
+      required this.meals,
+      required this.favoriteScreen});
+  final String? title;
+  final List<Meal> meals;
+  final void Function(Meal meal) favoriteScreen;
   void _selectedMeal(BuildContext context, Meal meal) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => MealDetailScreen(
-          meal: meal,
-          favoriMeali: favoriMeali,
-        ),
-      ),
-    );
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) =>
+          MealDetailScreen(meal: meal, favoriteScreen: favoriteScreen),
+    ));
   }
 
   @override
   Widget build(BuildContext context) {
     Widget content = Center(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Oh no....',
+            'oh no..',
             style: Theme.of(context)
                 .textTheme
                 .bodyLarge!
@@ -40,7 +36,7 @@ class MealsScreen extends StatelessWidget {
             height: 10,
           ),
           Text(
-            'Please select another',
+            'Please select another category',
             style: Theme.of(context)
                 .textTheme
                 .bodyLarge!
@@ -49,18 +45,21 @@ class MealsScreen extends StatelessWidget {
         ],
       ),
     );
-    if (meal.isNotEmpty) {
+    if (meals.isNotEmpty) {
       content = ListView.builder(
-        itemCount: meal.length,
+        itemCount: meals.length,
         itemBuilder: (context, index) => MealItemTrait(
-          meal: meal[index],
-          selectedMeal: (meal) => {_selectedMeal(context, meal)},
+          meal: meals[index],
+          selectedMeal: (meal) => _selectedMeal(context, meal),
         ),
       );
     }
+    if (title == null) {
+      return content;
+    }
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Text(title!),
       ),
       body: content,
     );
