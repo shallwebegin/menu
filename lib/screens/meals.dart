@@ -4,19 +4,20 @@ import 'package:menu/screens/meal_detail.dart';
 import 'package:menu/widgets/meal_item_trait.dart';
 
 class MealsScreen extends StatelessWidget {
-  const MealsScreen({
-    super.key,
-    this.title,
-    required this.meals,
-  });
+  const MealsScreen(
+      {super.key,
+      this.title,
+      required this.meals,
+      required this.onFavoriteSelect});
   final String? title;
   final List<Meal> meals;
-
+  final void Function(Meal meal) onFavoriteSelect;
   void _selectMeal(BuildContext context, Meal meal) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => MealDetailScreen(
           meal: meal,
+          onFavoriteSelect: onFavoriteSelect,
         ),
       ),
     );
@@ -29,7 +30,7 @@ class MealsScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Oh no not found',
+            'Oh no not found anything',
             style: Theme.of(context)
                 .textTheme
                 .titleLarge!
@@ -39,10 +40,10 @@ class MealsScreen extends StatelessWidget {
             height: 20,
           ),
           Text(
-            'Please back',
+            'Please select another',
             style: Theme.of(context)
                 .textTheme
-                .titleLarge!
+                .bodyLarge!
                 .copyWith(color: Theme.of(context).colorScheme.onBackground),
           ),
         ],
@@ -52,10 +53,11 @@ class MealsScreen extends StatelessWidget {
       content = ListView.builder(
         itemCount: meals.length,
         itemBuilder: (context, index) => MealItemTrait(
-            meal: meals[index],
-            selectedMeal: (meal) {
-              _selectMeal(context, meal);
-            }),
+          meal: meals[index],
+          selectedMeal: (meal) {
+            _selectMeal(context, meal);
+          },
+        ),
       );
     }
     if (title == null) {
